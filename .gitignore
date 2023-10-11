@@ -1,2 +1,3 @@
 /server/database/config.py
 /server/venv
+**/__pycache__/
