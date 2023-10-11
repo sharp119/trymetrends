@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login/Register with Solana</title>
+</head>
+<body>
+    <h2>Login/Register with Phantom Wallet</h2>
+    <button onclick="connectWallet()">Connect with Phantom</button>
+    <button onclick="transferSOL('8dLXuMvpJwnm73Ck34ny97oLxuuaQZPixqmXtvWwrDLj', 1)">Transfer 1 SOL</button>
+
+    <!-- <button onclick="disconnectWallet()">Disconnect from Phantom</button> -->
+    <script src="https://cdn.jsdelivr.net/npm/buffer@6.0.3/index.min.js"></script>
+    <script>
+        if (!window.Buffer) {
+            window.Buffer = Buffer.Buffer;
+        }
+    </script>
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.js"></script>
+
+
+    <script>
+        const connection = new solanaWeb3.Connection("https://api.devnet.solana.com");
+
+        function connectWallet() {
+            if (window.solana && window.solana.isPhantom) {
+                window.solana.connect().then(() => {
+                    if (window.solana.isConnected) {
+                        alert("Connected to wallet with address: " + window.solana.publicKey.toString());
+                        verifyAddress(window.solana.publicKey.toString());
+                    }
+                });
+            } else {
+                alert("Please install Phantom wallet.");
+            }
+        }
+
+        // function disconnectWallet() {
+        //     if (window.solana && window.solana.isPhantom) {
+        //         window.solana.disconnect();
+        //         alert("Disconnected from Phantom wallet.");
+        //     }
+        // }
+
+        function verifyAddress(address) {
+            fetch('/verify-address', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    address: address
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "Not Registered") {
+                    document.getElementById("registrationForm").style.display = "block";
+                }
+            });
+        }
+
+        function registerUser() {
+            let username = document.getElementById("username").value;
+            let shop_name = document.getElementById("shop_name").value;
+            let address = window.solana.publicKey.toString();
+
+            fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    shop_name: shop_name,
+                    address: address
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "Registered Successfully") {
+                    alert("Registered!");
+                }
+            });
+        }
+
+        async function transferSOL(destinationAddress, amount) {
+    if (window.solana && window.solana.isPhantom) {
+        const transaction = new solanaWeb3.Transaction().add(
+            solanaWeb3.SystemProgram.transfer({
+                fromPubkey: window.solana.publicKey,
+                toPubkey: new solanaWeb3.PublicKey(destinationAddress),
+                lamports: solanaWeb3.LAMPORTS_PER_SOL * amount
+            })
+        );
+
+        let { blockhash } = await connection.getRecentBlockhash();
+        transaction.recentBlockhash = blockhash;
+        transaction.feePayer = window.solana.publicKey;
+
+        let signedTransaction = await window.solana.signTransaction(transaction);
+        let txid = await connection.sendRawTransaction(signedTransaction.serialize());
+        await connection.confirmTransaction(txid);
+        alert(`Transaction successful with ID: ${txid}`);
+    } else {
+        alert("Please connect to Phantom wallet first.");
+    }
+}
+
+    </script>
+
+    <!-- Registration Form -->
+    <div id="registrationForm" style="display:none;">
+        <input type="text" id="username" placeholder="Username">
+        <input type="text" id="shop_name" placeholder="Shop Name">
+        <button onclick="registerUser()">Register</button>
+    </div>
+
+</body>
+</html>
