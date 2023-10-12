@@ -50,7 +50,7 @@
 #     app.run(debug=True)
 
 
-from flask import Flask
+from flask import Flask, render_template
 from api.insertion import insertion
 from api.selection import selection
 
@@ -58,6 +58,11 @@ app = Flask(__name__)
 
 app.register_blueprint(insertion)
 app.register_blueprint(selection)
+
+@app.route('/')
+def login():
+    return render_template('login.html')
+
 
 
 

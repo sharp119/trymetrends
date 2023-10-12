@@ -1,0 +1,35 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Lobster+Two&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap'); /* Assuming Moontime font is similar to Montserrat as I can't find a Moontime font */
+@import url('https://fonts.googleapis.com/css2?family=Glacial+Indifference&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=TT+Firs&display=swap');
+
+/* Common styles */
+body {
+    font-family: 'Glacial Indifference', sans-serif;
+    background-color: #fffaf6; /* global colour for site background */
+}
+
+.branding-trymetrends {
+    font-family: 'Lobster Two', cursive;
+}
+
+.branding-tmt {
+    font-family: 'Montserrat', sans-serif; /* Replace Montserrat with Moontime if you have a custom font link */
+}
+
+.branding-nextgen {
+    font-family: 'Glacial Indifference', sans-serif;
+}
+
+.product-details {
+    font-family: 'TT Firs', sans-serif;
+}
+
+/* Image Patches: Assuming the patches are named patch1.jpg, patch2.jpg, etc. */
+.patch1 {
+    background-image: url('path_to_images/patch1.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+/* Repeat for other patches... */
