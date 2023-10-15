@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@solana/web3.js@v1.33.0/lib/index.iife.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&family=Lobster+Two&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
+
+    <title>TMT</title>
+    <style>
+        * {
+            font-family: 'Lato', sans-serif;
+        }
+
+        .lobster {
+            font-family: 'Lobster Two', sans-serif;
+        }
+
+        .product {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden; /* This will ensure that images don't overflow its parent */
+    }
+    </style>
+</head>
+
+<body class="bg-white">
+    <nav class="fixed w-full z-20 top-0 left-0 bg-transparent">
+        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+            <a href="" class="flex items-center">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" class="h-8 mr-3" alt="TMT Logo">
+            </a>
+            <div class="flex md:order-2">
+                <button type="button"id="connect_button"
+                    class="text-white bg-teal-500 hover:bg-teal-600 focus:ring-4 focus:outline-none focus:ring-teal-300 font-medium rounded-lg text-lg px-4 py-2 text-center mr-3 md:mr-0" onclick="connectWallet()">Login</button>
+                <button data-collapse-toggle="navbar-sticky" type="button"
+                    class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                    aria-controls="navbar-sticky" aria-expanded="false">
+                    <span class="sr-only">Open main menu</span>
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 17 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M1 1h15M1 7h15M1 13h15" />
+                    </svg>
+                </button>
+            </div>
+            <div class="items-center justify-between text-xl hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
+                <ul
+                    class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white ">
+                    <li>
+                        <a href="#"
+                            class="block py-2 pl-3 pr-4 text-white bg-teal-700 rounded md:bg-transparent md:text-teal-700 md:p-0"
+                            aria-current="page">Home</a>
+                    </li>
+                    <li>
+                        <a href="/products"
+                            class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-teal-700 md:p-0">Products</a>
+                    </li>
+                    <li>
+                        <a href="#"
+                            class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-teal-700 md:p-0">Try
+                            On</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="product-display flex w-full">
+        <!-- Display Image 1 (Left) -->
+        <div class="product w-1/2 pr-3 bg-white p-6 rounded shadow-lg">
+            <img src="{{ url_for('static', filename=image1.path) }}" alt="Product Image 1" class="max-w-full h-auto mb-4 rounded"  onclick="navigateToTryOn('image1')">
+            <div class="product-info">
+                <p>Price: {{ image1.price }}</p>
+                <p>Seller: {{ image1.seller }}</p>
+            </div>
+        </div>
+    
+        <!-- Display Image 2 (Right) -->
+        <div class="product w-1/2 pl-3 bg-white p-6 rounded shadow-lg">
+            <img src="{{ url_for('static', filename=image2.path) }}" alt="Product Image 2" class="max-w-full h-auto mb-4 rounded"  onclick="navigateToTryOn('image2')">
+            <div class="product-info">
+                <p>Price: {{ image2.price }}</p>
+                <p>Seller: {{ image2.seller }}</p>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script> -->
+
+    <script>
+        var wallet;
+        
+        // document.addEventListener("DOMContentLoaded", async function() {
+        //     if (window.solana && window.solana.isConnected) {
+        //         alert("connected");
+        //         document.querySelector('.login-btn').style.display = 'none'; 
+        //     } else {
+        //         alert("not connected ");
+        //     }
+        // });
+    
+        function connectWallet() {
+      (async () => {
+        try {
+          wallet = await window.solana.connect();
+        } catch (err) {
+          console.log(err);
+        }
+      })();
+      window.solana.on(
+        "connect",
+        () => (
+            
+          document.getElementById("connect_button").innerText = "Connected"
+        )
+      );
+    }
+
+    function navigateToTryOn(imageType) {
+    if (imageType === 'image1') {
+        window.location.href = "/tryon?image=image1";
+    } else if (imageType === 'image2') {
+        window.location.href = "/tryon?image=image2";
+    }
+}
+
+    </script>
+    
+
+</body>
+
+</html>
